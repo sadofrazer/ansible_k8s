@@ -5,6 +5,8 @@
     pip_install_packages:
       - name: docker
   become: true
+  roles:
+    - geerlingguy.docker
   pre_tasks:
 #    - name: Install EPEL repo
 #      package: name={{ item }} state=present
@@ -13,12 +15,10 @@
 #        - epel-release
 #        - wget
 #        - git
-     - name: Install docker
-       roles:
-        - geerlingguy.docker
+
      - name : give the right to user on docker
        command: sudo usermod -aG docker {{ ansible_user }}
-       
+
   tasks:
 #    - name: attribute variable and execute shell
 #      include_tasks: subtasks.yml
