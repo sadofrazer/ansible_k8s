@@ -5,8 +5,8 @@
   #   pip_install_packages:
   #     - name: docker
   become: true
-  roles:
-    - geerlingguy.docker
+  # roles:
+  #   - geerlingguy.docker
   pre_tasks:
 #    - name: Install EPEL repo
 #      package: name={{ item }} state=present
