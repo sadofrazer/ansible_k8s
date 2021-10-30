@@ -1,2 +1,2 @@
-ansible_user: admin
-ansible_password: admin
+ansible_user: centos
+ansible_password: centos
