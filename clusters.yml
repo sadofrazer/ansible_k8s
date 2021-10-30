@@ -58,12 +58,6 @@
         src: "weave_install.sh.j2"
         dest: "/home/{{ ansible_user }}/weave_install.sh"
       when: env == "master"
-
-    - name: Install weave Cni plugin
-      become: false
-      command: " sh /home/{{ ansible_user }}/weave_install.sh"
-      when: env == "master"
-      ignore_errors: True
   
     - name: create kubeconfig file
       file:
@@ -120,7 +114,7 @@
 
     - name: copying de join file on worker
       copy:
-        src: /home/{{ ansible_user }}/{{ master_name }}/join-cmd.sh
+        src: /home/{{ ansible_user }}/join-cmd.sh
         dest: /home/{{ ansible_user }}/join-cmd.sh
       when: (env == "worker")
 
@@ -129,3 +123,9 @@
       args:
         chdir: "/home/{{ ansible_user }}/"
       when: (env == "worker")
+
+    - name: Install weave Cni plugin
+      become: false
+      command: "sh /home/{{ ansible_user }}/weave_install.sh"
+      when: env == "master"
+      ignore_errors: True
