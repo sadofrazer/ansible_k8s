@@ -22,21 +22,21 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cl
 exclude=kubelet kubeadm kubectl
 EOF
 
- sudo mkdir /etc/docker
- cat <<EOF | sudo tee /etc/docker/daemon.json
- {
-   "exec-opts": ["native.cgroupdriver=systemd"],
-   "log-driver": "json-file",
-   "log-opts": {
-     "max-size": "100m"
-   },
-   "storage-driver": "overlay2"
- }
- EOF
+sudo mkdir /etc/docker
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
 
- sudo systemctl enable docker
- sudo systemctl daemon-reload
- sudo systemctl restart docker
+sudo systemctl enable docker
+sudo systemctl daemon-reload
+sudo systemctl restart docker
 
 sudo setenforce 0
 sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
@@ -46,5 +46,3 @@ sudo systemctl enable --now kubelet
 
 swapoff -a
 echo 1 > /proc/sys/net/ipv4/ip_forward
-
-
