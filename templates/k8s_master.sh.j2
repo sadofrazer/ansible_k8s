@@ -34,9 +34,9 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 }
 EOF
 
-sudo systemctl enable docker
-sudo systemctl daemon-reload
-sudo systemctl restart docker
+#sudo systemctl enable docker
+#sudo systemctl daemon-reload
+#sudo systemctl restart docker
 
 sudo setenforce 0
 sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
