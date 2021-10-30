@@ -1,26 +1,2 @@
 ansible_user: centos
-ansible_password: centos
-
-host1:
-  name: adminSvr
-  ip: 192.168.40.50
-
-host2:
-  name: cl1-master
-  ip: 192.168.40.50
-
-host3:
-  name: cl1-worker01
-  ip: 192.168.40.51
-
-host4: 
-  name: cl1-worker02
-  ip: 192.168.40.52
-
-host5:
-  name: cl2-master
-  ip: 192.168.40.60
-
-host6:
-  name: cl2-worker01
-  ip: 192.168.40.61
+ansible_password: admin
