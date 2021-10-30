@@ -1,0 +1,123 @@
+---
+- name: "Apache installation using docker"
+  hosts: Prod
+  become: true
+  pre_tasks:
+#    - name: Install EPEL repo
+#      package: name={{ item }} state=present
+#      when: ansible_distribution == "CentOS"
+#      loop:
+#        - epel-release
+#        - wget
+#        - git
+
+  tasks:
+#    - name: attribute variable and execute shell
+#      include_tasks: subtasks.yml
+#
+#      loop:
+#        - {name: "{{ host1.name }}", ip: "{{ host1.ip }}"}
+#        - {name: "{{ host2.name }}", ip: "{{ host2.ip }}" }
+#        - {name: "{{ host3.name }}", ip: "{{ host3.ip }}" }
+#        - {name: "{{ host4.name }}", ip: "{{ host4.ip }}" }
+#        - {name: "{{ host5.name }}", ip: "{{ host5.ip }}" }
+#        - {name: "{{ host6.name }}", ip: "{{ host6.ip }}" }
+    
+    - name: generate sh file to create k8s master
+      template:
+        src: "k8s_master.sh.j2"
+        dest: "/home/{{ ansible_user }}/k8s_master.sh"
+      when: env == "master"      
+
+    - name: Install kubernetes for master nodes
+      command: " sh /home/{{ ansible_user }}/k8s_master.sh"
+      when: env == "master"
+      ignore_errors: True
+
+    - name: generate sh file to initialize the k8s cluster
+      template:
+        src: "cluster_init.sh.j2"
+        dest: "/home/{{ ansible_user }}/cluster_init.sh"
+      when: env == "master"
+
+    - name: cluster initialize
+      command: " sh /home/{{ ansible_user }}/cluster_init.sh"
+      when: env == "master"
+      ignore_errors: True
+
+    - name: generate sh file to install weave cni plugin
+      template:
+        src: "weave_install.sh.j2"
+        dest: "/home/{{ ansible_user }}/weave_install.sh"
+      when: env == "master"
+
+    - name: Install weave Cni plugin
+      become: false
+      command: " sh /home/{{ ansible_user }}/weave_install.sh"
+      when: env == "master"
+      ignore_errors: True
+  
+    - name: create kubeconfig file
+      file:
+        path: "/home/{{ ansible_user }}/.kube"
+        recurse: yes
+        state: directory
+      when: env == "master"
+
+    - name: give the right to centos
+      command: "cp /etc/kubernetes/admin.conf /home/{{ ansible_user }}/.kube/config"
+      when: env == "master"
+      ignore_errors: True
+
+    - name: give the right to centos
+      command: "chown centos:centos /home/{{ ansible_user }}/.kube/config"
+      when: env == "master"
+      ignore_errors: True  
+
+    - name: generate sh file to create k8s worker
+      template:
+        src: "k8s_worker.sh.j2"
+        dest: "/home/{{ ansible_user }}/k8s_worker.sh"
+      when: env == "worker"
+ 
+    - name: Install kubernetes for worker nodes
+      command: " sh /home/{{ ansible_user }}/k8s_worker.sh"
+      when: env == "worker"
+      ignore_errors: True 
+
+# join worker nodes to master.
+    
+    - name: generate sh file to create k8s worker
+      template:
+        src: "token_create.sh.j2"
+        dest: "/home/{{ ansible_user }}/token_create.sh"
+      when: env == "master"
+ 
+    - name: create join command on master nodes 
+      command: "sh /home/{{ ansible_user }}/token_create.sh"
+      when: env == "master"
+      ignore_errors: True 
+
+    - name: download join file
+      fetch: 
+        src: /home/{{ ansible_user }}/join-cmd.sh
+        dest: /home/{{ ansible_user }}/
+        flat: yes
+      when: env == "master"
+    
+    - name: attribute hosts variables
+      set_fact:
+        master_name: "{{ ansible_hostname }}"
+      when: env == "master"
+
+    - name: copying de join file on worker
+      copy:
+        src: /home/{{ ansible_user }}/{{ master_name }}/join-cmd.sh
+        dest: /home/{{ ansible_user }}/join-cmd.sh
+      when: (env == "worker")
+
+    - name: execute the join command worker
+      command: "sh join-cmd.sh"
+      args:
+        chdir: "/home/{{ ansible_user }}/"
+      when: (env == "worker")
