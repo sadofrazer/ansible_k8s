@@ -1,6 +1,9 @@
 ---
 - name: "Apache installation using docker"
   hosts: Prod
+  vars:
+    pip_install_packages:
+      - name: docker
   become: true
   pre_tasks:
 #    - name: Install EPEL repo
@@ -10,7 +13,12 @@
 #        - epel-release
 #        - wget
 #        - git
-
+     - name: Install docker
+       roles:
+        - geerlingguy.docker
+     - name : give the right to user on docker
+       command: sudo usermod -aG docker {{ ansible_user }}
+       
   tasks:
 #    - name: attribute variable and execute shell
 #      include_tasks: subtasks.yml
@@ -27,8 +35,8 @@
       template:
         src: "k8s_master.sh.j2"
         dest: "/home/{{ ansible_user }}/k8s_master.sh"
-      when: env == "master"      
-
+      when: env == "master"
+        
     - name: Install kubernetes for master nodes
       command: " sh /home/{{ ansible_user }}/k8s_master.sh"
       when: env == "master"
