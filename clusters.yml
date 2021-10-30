@@ -1,9 +1,9 @@
 ---
 - name: "Apache installation using docker"
   hosts: Prod
-  vars:
-    pip_install_packages:
-      - name: docker
+  # vars:
+  #   pip_install_packages:
+  #     - name: docker
   become: true
   roles:
     - geerlingguy.docker
