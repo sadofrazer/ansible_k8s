@@ -1,0 +1,4 @@
+#! /bin/bash
+echo "#! /bin/bash" > /home/{{ ansible_user }}/{{ host_name }}-join-cmd.sh
+kubeadm token create --print-join-command >> /home/{{ ansible_user }}/{{ host_name }}-join-cmd.sh
+

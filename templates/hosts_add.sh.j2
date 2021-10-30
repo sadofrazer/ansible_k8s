@@ -1,0 +1,11 @@
+#! /bin/bash
+echo  "----------------------------------------"
+echo  "Ajout des machines dans les fichiers hosts"
+echo  "----------------------------------------"
+echo -e "\n1) Mise à jour du fichier host:"
+if (cat /etc/hosts | grep {{ hostname }}) 1> /dev/null ; then
+   echo "{{ hostname }} déja définit dans ce fichier host"
+else
+  sudo echo "{{ host_ip }}  {{ hostname }}" >> /etc/hosts
+  echo "{{ hostname }} correctement ajouté dans le fichier hote"
+fi
