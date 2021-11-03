@@ -1,36 +1,13 @@
 ---
 - name: "Apache installation using docker"
   hosts: Prod
-  # vars:
-  #   pip_install_packages:
-  #     - name: docker
   become: true
-  # roles:
-  #   - geerlingguy.docker
-  pre_tasks:
-#    - name: Install EPEL repo
-#      package: name={{ item }} state=present
-#      when: ansible_distribution == "CentOS"
-#      loop:
-#        - epel-release
-#        - wget
-#        - git
 
+  pre_tasks:
      - name : give the right to user on docker
        command: sudo usermod -aG docker {{ ansible_user }}
 
   tasks:
-#    - name: attribute variable and execute shell
-#      include_tasks: subtasks.yml
-#
-#      loop:
-#        - {name: "{{ host1.name }}", ip: "{{ host1.ip }}"}
-#        - {name: "{{ host2.name }}", ip: "{{ host2.ip }}" }
-#        - {name: "{{ host3.name }}", ip: "{{ host3.ip }}" }
-#        - {name: "{{ host4.name }}", ip: "{{ host4.ip }}" }
-#        - {name: "{{ host5.name }}", ip: "{{ host5.ip }}" }
-#        - {name: "{{ host6.name }}", ip: "{{ host6.ip }}" }
-    
     - name: generate sh file to create k8s master
       template:
         src: "k8s_master.sh.j2"
