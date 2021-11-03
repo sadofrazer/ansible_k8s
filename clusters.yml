@@ -3,10 +3,6 @@
   hosts: Prod
   become: true
 
-  pre_tasks:
-     - name : give the right to user on docker
-       command: sudo usermod -aG docker {{ ansible_user }}
-
   tasks:
     - name: generate sh file to create k8s master
       template:
@@ -63,6 +59,9 @@
       command: " sh /home/{{ ansible_user }}/k8s_worker.sh"
       when: env == "worker"
       ignore_errors: True 
+    
+    - name : give the right to user on docker
+      command: sudo usermod -aG docker {{ ansible_user }}
 
 # join worker nodes to master.
     
