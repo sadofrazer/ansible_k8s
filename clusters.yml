@@ -39,13 +39,13 @@
         state: directory
       when: env == "master"
 
-    - name: give the right to centos
+    - name: give the right to centos (copy conf files)
       command: "cp /etc/kubernetes/admin.conf /home/{{ ansible_user }}/.kube/config"
       when: env == "master"
       ignore_errors: True
 
     - name: give the right to centos
-      command: "chown centos:centos /home/{{ ansible_user }}/.kube/config"
+      command: "chown {{ ansible_user }}:{{ ansible_user }} /home/{{ ansible_user }}/.kube/config"
       when: env == "master"
       ignore_errors: True  
 
@@ -79,7 +79,7 @@
     - name: download join file
       fetch: 
         src: /home/{{ ansible_user }}/join-cmd.sh
-        dest: /home/{{ ansible_user }}/
+        dest: /home/centos/
         flat: yes
       when: env == "master"
     
