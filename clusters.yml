@@ -79,7 +79,7 @@
     - name: download join file
       fetch: 
         src: /home/{{ ansible_user }}/join-cmd.sh
-        dest: /home/centos/
+        dest: /home/{{ local_user }}/
         flat: yes
       when: env == "master"
     
@@ -90,7 +90,7 @@
 
     - name: copying de join file on worker
       copy:
-        src: /home/{{ ansible_user }}/join-cmd.sh
+        src: /home/{{ local_user }}/join-cmd.sh
         dest: /home/{{ ansible_user }}/join-cmd.sh
       when: (env == "worker")
 
