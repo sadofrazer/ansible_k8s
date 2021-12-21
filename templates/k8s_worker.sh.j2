@@ -1,3 +1,6 @@
+#!/bin/bash
+sudo hostnamectl set-hostname {{ inventory_hostname }}
+echo "127.0.0.1 {{ inventory_hostname }}" >> /etc/hosts
 # Enable kernel modules
 sudo modprobe overlay
 sudo modprobe br_netfilter
